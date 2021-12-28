@@ -1,7 +1,9 @@
+using CourseLibrary.API.DbContexts;
 using CourseLibrary.API.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -27,6 +29,14 @@ namespace CourseLibrary.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<ICourseLibraryRepository, CourseLibraryRepository>();
+            services.AddDbContext<CourseLibraryContext>(options =>
+            {
+                options.UseSqlServer(@"Server=(localdb)\MSSQLLocalDB;Database=CourseLibraryDb;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
+            });
+            //services.AddControllers(setUpAction =>
+            //{
+            //    setUpAction.ReturnHttpNotAcceptable = true; //Return status 406 for unsupported media type.
+            //}).AddXmlDataContractSerializerFormatters(); //Adds Xml as a content type header.
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -44,10 +54,12 @@ namespace CourseLibrary.API
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CourseLibrary.API v1"));
             }
 
+            //Marks the selected endpoint
             app.UseRouting();
 
             app.UseAuthorization();
 
+            //Marks the executed endpoint
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

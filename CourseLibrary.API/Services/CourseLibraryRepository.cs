@@ -1,4 +1,5 @@
-﻿using CourseLibrary.API.Entities;
+﻿using CourseLibrary.API.DbContexts;
+using CourseLibrary.API.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,13 @@ namespace CourseLibrary.API.Services
 {
     public class CourseLibraryRepository : ICourseLibraryRepository
     {
+        private readonly CourseLibraryContext _context;
+
+        public CourseLibraryRepository(CourseLibraryContext context)
+        {
+            _context = context;
+
+        }
         void ICourseLibraryRepository.AddAuthor(Author author)
         {
             throw new NotImplementedException();
@@ -35,12 +43,13 @@ namespace CourseLibrary.API.Services
 
         Author ICourseLibraryRepository.GetAuthor(Guid authorId)
         {
-            throw new NotImplementedException();
+            var author = _context.Authors.Find(authorId);
+            return author;
         }
 
         IEnumerable<Author> ICourseLibraryRepository.GetAuthors()
         {
-            throw new NotImplementedException();
+            return _context.Authors.ToList();
         }
 
         IEnumerable<Author> ICourseLibraryRepository.GetAuthors(IEnumerable<Guid> authorIds)
